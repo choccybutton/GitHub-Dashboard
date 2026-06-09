@@ -9,6 +9,12 @@ export default function RepoCard({ repo, stats }) {
     });
   };
 
+  const formatSize = (sizeKb) => {
+    if (sizeKb < 1024) return `${sizeKb} KB`;
+    if (sizeKb < 1024 * 1024) return `${(sizeKb / 1024).toFixed(1)} MB`;
+    return `${(sizeKb / (1024 * 1024)).toFixed(1)} GB`;
+  };
+
   const getActivityStatus = () => {
     if (!stats?.lastCommit) return 'unknown';
 
@@ -34,6 +40,10 @@ export default function RepoCard({ repo, stats }) {
         <div className="stat">
           <span className="label">Last commit</span>
           <span className="value">{stats?.lastCommit ? formatDate(stats.lastCommit) : 'N/A'}</span>
+        </div>
+        <div className="stat">
+          <span className="label">Size</span>
+          <span className="value">{repo.size ? formatSize(repo.size) : 'N/A'}</span>
         </div>
         <div className="stat">
           <span className="label">Open issues</span>
