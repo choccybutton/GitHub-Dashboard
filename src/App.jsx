@@ -17,14 +17,37 @@ function App() {
     const code = params.get('code');
 
     if (code && !token) {
-      // Exchange code for token via your backend
-      // For now, we'll use the code as a temporary measure
-      // In production, you need a backend to securely exchange the code for a token
-      alert(
-        'OAuth code received! You need to set up a backend to securely exchange this code for a GitHub token. See the README for setup instructions.'
-      );
+      exchangeCodeForToken(code);
     }
   }, [token]);
+
+  const exchangeCodeForToken = async (code) => {
+    try {
+      setLoading(true);
+      const response = await fetch(
+        `${import.meta.env.VITE_FUNCTIONS_URL}/exchangeGitHubCode`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code }),
+        }
+      );
+
+      const data = await response.json();
+      if (data.token) {
+        localStorage.setItem('github_token', data.token);
+        setToken(data.token);
+        window.history.replaceState({}, document.title, window.location.pathname);
+      } else {
+        setError('Failed to exchange code for token');
+      }
+    } catch (err) {
+      setError('Authentication failed. Please try again.');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Fetch repos when token is available
   useEffect(() => {
@@ -54,12 +77,20 @@ function App() {
   };
 
   const handleLogin = () => {
-    // For development, you can manually enter a token
-    const devToken = prompt('Enter your GitHub Personal Access Token (for development):');
-    if (devToken) {
-      localStorage.setItem('github_token', devToken);
-      setToken(devToken);
+    const clientId = import.meta.env.VITE_GITHUB_CLIENT_ID;
+    const redirectUri = import.meta.env.VITE_GITHUB_REDIRECT_URI;
+
+    if (!clientId) {
+      setError('GitHub OAuth not configured. Please set VITE_GITHUB_CLIENT_ID environment variable.');
+      return;
     }
+
+    const authUrl = new URL('https://github.com/login/oauth/authorize');
+    authUrl.searchParams.append('client_id', clientId);
+    authUrl.searchParams.append('redirect_uri', redirectUri);
+    authUrl.searchParams.append('scope', 'repo user');
+
+    window.location.href = authUrl.toString();
   };
 
   const handleLogout = () => {
@@ -77,14 +108,12 @@ function App() {
           <h1>GitHub Dashboard</h1>
           <p>View the status of all your repositories at a glance</p>
           <button onClick={handleLogin} className="login-btn">
-            Login with GitHub
+            Login with GitHub OAuth
           </button>
           <p className="note">
-            For now, use a Personal Access Token with 'repo' and 'user' scopes.
+            You'll be redirected to GitHub to authorize this application.
             <br />
-            <a href="https://github.com/settings/tokens" target="_blank" rel="noopener noreferrer">
-              Create a token here
-            </a>
+            No tokens are stored on this site—authentication is handled securely.
           </p>
         </div>
       </div>

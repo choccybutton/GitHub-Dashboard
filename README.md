@@ -27,27 +27,60 @@ The app will start at `http://localhost:5173`
 
 ## Authentication
 
-### Current: Personal Access Token (Development)
+The app uses GitHub OAuth for authentication. No credentials or tokens are stored on the client.
 
-For development, the app uses a personal access token. You'll be prompted to enter it when you open the app.
+### Setup GitHub OAuth App
 
-### Future: GitHub OAuth
+1. Go to https://github.com/settings/developers
+2. Click "New OAuth App"
+3. Fill in the details:
+   - **Application name**: GitHub Dashboard
+   - **Homepage URL**: Your app URL (e.g., `https://your-firebase-project.web.app`)
+   - **Authorization callback URL**: 
+     - Development: `http://localhost:5173`
+     - Production: `https://your-firebase-project.web.app`
+4. Copy the **Client ID** and **Client Secret**
 
-To set up full GitHub OAuth:
+### Development Setup
 
-1. Create a GitHub OAuth App:
-   - Go to https://github.com/settings/developers
-   - Click "New OAuth App"
-   - Fill in details (Authorization callback URL should match your deployment URL)
-   - Copy the Client ID
-
-2. Create a `.env.local` file:
+1. Create a `.env.local` file in the root:
    ```
-   VITE_GITHUB_CLIENT_ID=your_client_id
+   VITE_GITHUB_CLIENT_ID=your_github_oauth_app_client_id
    VITE_GITHUB_REDIRECT_URI=http://localhost:5173
+   VITE_FUNCTIONS_URL=http://localhost:5001/github-dashboard-642cb/us-central1
    ```
 
-3. Set up a backend server to securely exchange the OAuth code for a token (keeps your client secret safe)
+2. Set up Firebase Functions environment:
+   ```bash
+   cd functions
+   npm install
+   ```
+
+3. Create a `.env` file in the `functions` directory:
+   ```
+   GITHUB_CLIENT_ID=your_github_oauth_app_client_id
+   GITHUB_CLIENT_SECRET=your_github_oauth_app_client_secret
+   ```
+
+4. Run the Firebase emulator to test locally:
+   ```bash
+   firebase emulators:start
+   ```
+   This will run the functions locally at the URL specified in `VITE_FUNCTIONS_URL`
+
+### Production Deployment
+
+1. Deploy Firebase Functions with your secrets:
+   ```bash
+   firebase functions:config:set github.client_id="your_client_id"
+   firebase functions:config:set github.client_secret="your_client_secret"
+   firebase deploy --only functions,hosting
+   ```
+
+2. Update your `.env.local` with the production functions URL:
+   ```
+   VITE_FUNCTIONS_URL=https://us-central1-github-dashboard-642cb.cloudfunctions.net
+   ```
 
 ## Features
 
