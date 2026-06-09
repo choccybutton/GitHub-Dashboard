@@ -27,7 +27,15 @@ export const fetchUserRepos = async (token) => {
       },
     });
 
-    if (!response.ok) throw new Error('Failed to fetch repos');
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      console.error('GitHub API error:', {
+        status: response.status,
+        statusText: response.statusText,
+        error: errorData,
+      });
+      throw new Error(`GitHub API error: ${response.status} ${response.statusText}`);
+    }
 
     const repos = await response.json();
     return repos.sort((a, b) => new Date(b.pushed_at) - new Date(a.pushed_at));
@@ -39,20 +47,28 @@ export const fetchUserRepos = async (token) => {
 
 export const getRepoStats = async (token, owner, repo) => {
   try {
-    const [repoData, issues] = await Promise.all([
+    const [repoResponse, issuesResponse] = await Promise.all([
       fetch(`https://api.github.com/repos/${owner}/${repo}`, {
         headers: {
           Authorization: `token ${token}`,
           Accept: 'application/vnd.github.v3+json',
         },
-      }).then(r => r.json()),
+      }),
       fetch(`https://api.github.com/repos/${owner}/${repo}/issues?state=open`, {
         headers: {
           Authorization: `token ${token}`,
           Accept: 'application/vnd.github.v3+json',
         },
-      }).then(r => r.json()),
+      }),
     ]);
+
+    if (!repoResponse.ok) {
+      console.error(`Failed to fetch repo data: ${repoResponse.status}`);
+      return { lastCommit: null, language: null, openIssues: 0 };
+    }
+
+    const repoData = await repoResponse.json();
+    const issues = issuesResponse.ok ? await issuesResponse.json() : [];
 
     return {
       lastCommit: repoData.pushed_at,
