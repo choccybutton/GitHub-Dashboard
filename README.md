@@ -68,10 +68,39 @@ npm run build
 
 ## Deploy to Firebase
 
+### Initial Setup
+
 1. Install Firebase CLI: `npm install -g firebase-tools`
-2. Login: `firebase login`
-3. Initialize Firebase: `firebase init hosting` (in project directory)
-4. Deploy: `npm run deploy`
+2. Authenticate: `firebase login`
+3. Initialize Firebase project:
+   ```bash
+   firebase init hosting
+   ```
+   - Select your Firebase project
+   - Public directory: `dist`
+   - Single-page app: Yes
+   - Overwrite files: No
+
+### Build & Deploy
+
+#### Manual deployment
+```bash
+npm run build
+firebase deploy
+```
+
+Or use the shortcut:
+```bash
+npm run deploy
+```
+
+#### Automatic deployment (GitHub Actions)
+Set up a GitHub Actions workflow to deploy automatically on commits:
+1. Add Firebase token as a secret: `FIREBASE_TOKEN`
+2. Create `.github/workflows/deploy.yml` with Firebase CLI commands
+3. Every commit to main will trigger an automatic deployment
+
+Your app will be live at: `https://your-firebase-project.web.app`
 
 ## Next steps
 
