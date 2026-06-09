@@ -1,7 +1,7 @@
 .repo-card {
   display: block;
   background: var(--bg-secondary);
-  border: 1px solid var(--border);
+  border: 2px solid var(--border);
   border-radius: 8px;
   padding: 16px;
   text-decoration: none;
@@ -10,9 +10,24 @@
   cursor: pointer;
 }
 
+.repo-card.status-green {
+  border-color: #3fb950;
+}
+
+.repo-card.status-amber {
+  border-color: #d29922;
+}
+
+.repo-card.status-red {
+  border-color: #da3633;
+}
+
+.repo-card.status-unknown {
+  border-color: var(--border);
+}
+
 .repo-card:hover {
-  border-color: var(--accent);
-  box-shadow: 0 0 12px rgba(88, 166, 255, 0.1);
+  box-shadow: 0 0 12px rgba(88, 166, 255, 0.2);
 }
 
 .repo-header {

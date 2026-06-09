@@ -9,8 +9,20 @@ export default function RepoCard({ repo, stats }) {
     });
   };
 
+  const getActivityStatus = () => {
+    if (!stats?.lastCommit) return 'unknown';
+
+    const lastCommit = new Date(stats.lastCommit);
+    const now = new Date();
+    const daysSinceCommit = (now - lastCommit) / (1000 * 60 * 60 * 24);
+
+    if (daysSinceCommit <= 90) return 'green';
+    if (daysSinceCommit <= 180) return 'amber';
+    return 'red';
+  };
+
   return (
-    <a href={repo.html_url} target="_blank" rel="noopener noreferrer" className="repo-card">
+    <a href={repo.html_url} target="_blank" rel="noopener noreferrer" className={`repo-card status-${getActivityStatus()}`}>
       <div className="repo-header">
         <h3>{repo.name}</h3>
         {stats?.language && <span className="language">{stats.language}</span>}
