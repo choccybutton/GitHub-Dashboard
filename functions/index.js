@@ -1,21 +1,21 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
+const cors = require('cors');
 
 admin.initializeApp();
+
+const corsHandler = cors({ origin: true });
 
 const GITHUB_CLIENT_ID = process.env.GITHUB_CLIENT_ID;
 const GITHUB_CLIENT_SECRET = process.env.GITHUB_CLIENT_SECRET;
 
-exports.exchangeGitHubCode = functions.https.onRequest(async (req, res) => {
-  // Enable CORS
-  res.set('Access-Control-Allow-Origin', '*');
-  res.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.set('Access-Control-Allow-Headers', 'Content-Type');
+exports.exchangeGitHubCode = functions.https.onRequest((req, res) => {
+  corsHandler(req, res, async () => {
+    await handleExchange(req, res);
+  });
+});
 
-  if (req.method === 'OPTIONS') {
-    res.status(204).send('');
-    return;
-  }
+async function handleExchange(req, res) {
 
   console.log('exchangeGitHubCode called');
 
@@ -69,4 +69,4 @@ exports.exchangeGitHubCode = functions.https.onRequest(async (req, res) => {
     console.error('Error exchanging code:', error);
     res.status(500).json({ error: `Internal server error: ${error.message}` });
   }
-});
+}
