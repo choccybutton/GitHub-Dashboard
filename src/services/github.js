@@ -20,6 +20,7 @@ export const exchangeCodeForToken = async (code) => {
 
 export const fetchUserRepos = async (token) => {
   try {
+    console.log('Fetching repos with token:', token ? `${token.substring(0, 10)}...` : 'NO TOKEN');
     const response = await fetch('https://api.github.com/user/repos', {
       headers: {
         Authorization: `token ${token}`,

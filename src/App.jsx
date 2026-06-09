@@ -15,8 +15,10 @@ function App() {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const code = params.get('code');
+    const storedToken = localStorage.getItem('github_token');
 
-    if (code && !token) {
+    // Only exchange if we have a code and no token yet
+    if (code && !storedToken) {
       exchangeCodeForToken(code);
     }
   }, []); // Empty dependency array - run only once on mount
