@@ -24,8 +24,17 @@ function App() {
   const exchangeCodeForToken = async (code) => {
     try {
       setLoading(true);
+      const functionsUrl = import.meta.env.VITE_FUNCTIONS_URL;
+
+      if (!functionsUrl) {
+        setError('Functions URL not configured. Check VITE_FUNCTIONS_URL env var.');
+        return;
+      }
+
+      console.log('Exchanging code with:', `${functionsUrl}/exchangeGitHubCode`);
+
       const response = await fetch(
-        `${import.meta.env.VITE_FUNCTIONS_URL}/exchangeGitHubCode`,
+        `${functionsUrl}/exchangeGitHubCode`,
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -34,16 +43,18 @@ function App() {
       );
 
       const data = await response.json();
+      console.log('Token exchange response:', { status: response.status, hasToken: !!data.token, error: data.error });
+
       if (data.token) {
         localStorage.setItem('github_token', data.token);
         setToken(data.token);
         window.history.replaceState({}, document.title, window.location.pathname);
       } else {
-        setError('Failed to exchange code for token');
+        setError(`Authentication failed: ${data.error || 'Unknown error'}`);
       }
     } catch (err) {
-      setError('Authentication failed. Please try again.');
-      console.error(err);
+      setError(`Authentication failed: ${err.message}`);
+      console.error('Token exchange error:', err);
     } finally {
       setLoading(false);
     }
