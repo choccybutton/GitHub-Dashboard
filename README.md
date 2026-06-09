@@ -109,3 +109,4 @@ Your app will be live at: `https://your-firebase-project.web.app`
 - Add filtering/search
 - Add more detailed repository information (collaborators, recent activity, etc.)
 - Add deployment status indicator
+- Add ability to sort/filter by activity status or project size
