@@ -11,7 +11,7 @@ function App() {
   const [error, setError] = useState(null);
   const [user, setUser] = useState(null);
 
-  // Handle OAuth callback
+  // Handle OAuth callback - only run on mount
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const code = params.get('code');
@@ -19,7 +19,7 @@ function App() {
     if (code && !token) {
       exchangeCodeForToken(code);
     }
-  }, [token]);
+  }, []); // Empty dependency array - run only once on mount
 
   const exchangeCodeForToken = async (code) => {
     try {
