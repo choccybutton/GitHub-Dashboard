@@ -30,7 +30,7 @@ export const fetchUserRepos = async (token) => {
     if (!response.ok) throw new Error('Failed to fetch repos');
 
     const repos = await response.json();
-    return repos.sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at));
+    return repos.sort((a, b) => new Date(b.pushed_at) - new Date(a.pushed_at));
   } catch (error) {
     console.error('Error fetching repos:', error);
     throw error;
