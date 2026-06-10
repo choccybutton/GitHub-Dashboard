@@ -48,14 +48,20 @@ export const fetchUserRepos = async (token) => {
 
 export const getRepoStats = async (token, owner, repo) => {
   try {
-    const [repoResponse, issuesResponse] = await Promise.all([
+    const [repoResponse, issuesResponse, prsResponse] = await Promise.all([
       fetch(`https://api.github.com/repos/${owner}/${repo}`, {
         headers: {
           Authorization: `token ${token}`,
           Accept: 'application/vnd.github.v3+json',
         },
       }),
-      fetch(`https://api.github.com/repos/${owner}/${repo}/issues?state=open`, {
+      fetch(`https://api.github.com/repos/${owner}/${repo}/issues?state=open&is:issue`, {
+        headers: {
+          Authorization: `token ${token}`,
+          Accept: 'application/vnd.github.v3+json',
+        },
+      }),
+      fetch(`https://api.github.com/repos/${owner}/${repo}/pulls?state=open`, {
         headers: {
           Authorization: `token ${token}`,
           Accept: 'application/vnd.github.v3+json',
@@ -65,19 +71,21 @@ export const getRepoStats = async (token, owner, repo) => {
 
     if (!repoResponse.ok) {
       console.error(`Failed to fetch repo data: ${repoResponse.status}`);
-      return { lastCommit: null, language: null, openIssues: 0 };
+      return { lastCommit: null, language: null, openIssues: 0, openPRs: 0 };
     }
 
     const repoData = await repoResponse.json();
     const issues = issuesResponse.ok ? await issuesResponse.json() : [];
+    const prs = prsResponse.ok ? await prsResponse.json() : [];
 
     return {
       lastCommit: repoData.pushed_at,
       language: repoData.language,
       openIssues: Array.isArray(issues) ? issues.length : 0,
+      openPRs: Array.isArray(prs) ? prs.length : 0,
     };
   } catch (error) {
     console.error('Error fetching repo stats:', error);
-    return { lastCommit: null, language: null, openIssues: 0 };
+    return { lastCommit: null, language: null, openIssues: 0, openPRs: 0 };
   }
 };

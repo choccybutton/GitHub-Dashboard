@@ -46,8 +46,12 @@ export default function RepoCard({ repo, stats }) {
           <span className="value">{repo.size ? formatSize(repo.size) : 'N/A'}</span>
         </div>
         <div className="stat">
-          <span className="label">Open issues</span>
+          <span className="label">Issues</span>
           <span className="value">{stats?.openIssues ?? 0}</span>
+        </div>
+        <div className="stat">
+          <span className="label">Pull requests</span>
+          <span className="value">{stats?.openPRs ?? 0}</span>
         </div>
         <div className="stat">
           <span className="label">Stars</span>
