@@ -1,0 +1,32 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <!-- Head -->
+  <circle cx="50" cy="55" r="35" fill="#8B6F47"/>
+
+  <!-- Left Ear -->
+  <circle cx="25" cy="25" r="15" fill="#8B6F47"/>
+  <!-- Right Ear -->
+  <circle cx="75" cy="25" r="15" fill="#8B6F47"/>
+
+  <!-- Ear inner left -->
+  <circle cx="25" cy="28" r="8" fill="#6B5137"/>
+  <!-- Ear inner right -->
+  <circle cx="75" cy="28" r="8" fill="#6B5137"/>
+
+  <!-- Snout -->
+  <ellipse cx="50" cy="65" rx="18" ry="15" fill="#A0826D"/>
+
+  <!-- Left Eye -->
+  <circle cx="40" cy="48" r="5" fill="#1a1a1a"/>
+  <circle cx="40.5" cy="46.5" r="1.5" fill="white"/>
+
+  <!-- Right Eye -->
+  <circle cx="60" cy="48" r="5" fill="#1a1a1a"/>
+  <circle cx="60.5" cy="46.5" r="1.5" fill="white"/>
+
+  <!-- Nose -->
+  <ellipse cx="50" cy="68" rx="4" ry="3" fill="#1a1a1a"/>
+
+  <!-- Mouth -->
+  <path d="M 50 68 Q 46 72 42 71" stroke="#1a1a1a" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <path d="M 50 68 Q 54 72 58 71" stroke="#1a1a1a" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+</svg>
